@@ -1,8 +1,13 @@
 const jwt = require('jsonwebtoken')
 const Users = require('../model/users')
-const { HttpCode } = require('../helpers/constants')
+const fs = require('fs').promises
+
 require('dotenv').config()
+const path = require('path')
+const Jimp = require('jimp')
 const SECRET_KEY = process.env.JWT_SECRET
+const { HttpCode } = require('../helpers/constants')
+const createFolderIsExist = require('../helpers/create-dir')
 
 
 const reg = async (req, res, next) => {
@@ -66,4 +71,22 @@ const logout = async (req, res, next) => {
     return res.status(HttpCode.NO_CONTENT).json({})
 }
 
-module.exports = { reg, login, logout }
+const avatars = async (req, res, next) => {
+    try {
+        const id = req.user.id
+        const AVATARS_OF_USERS = process.env.AVATARS_OF_USERS
+        const pathFile = req.file.pathFile
+        const newNameAvatar = `${Date.now()}-${req.file.originalName}`
+        const img = await Jimp.read(pathFile)
+        img.autocrop().cover(250, 200, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE,)
+            .writeAsync(pathFile)
+
+        await createFolderIsExist(path.join(AVATARS_OF_USERS, id))
+        await fs.rename(pathFile, path.join(AVATARS_OF_USERS, id, newNameAvatar))
+        const avatarUrl = path.normalize(path.join(id, newNameAvatar))
+    } catch (e) {
+        next(e)
+    }
+}
+
+module.exports = { reg, login, logout, avatars }
