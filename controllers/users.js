@@ -5,11 +5,20 @@ const fs = require('fs').promises
 require('dotenv').config()
 const path = require('path')
 const Jimp = require('jimp')
-const { promisify } = require('util')
 const cloudinary = require('cloudinary').v2
-const SECRET_KEY = process.env.JWT_SECRET
+const { promisify } = require('util')
+
+
 const { HttpCode } = require('../helpers/constants')
 const createFolderIsExist = require('../helpers/create-dir')
+
+const SECRET_KEY = process.env.JWT_SECRET
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+});
 
 
 

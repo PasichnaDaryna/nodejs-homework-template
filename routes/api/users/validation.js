@@ -5,7 +5,7 @@ module.exports.validateUploadAvatar = (req, res, next) => {
             status: 'error',
             code: HttpCode.BAD_REQUEST,
             data: 'Bad request',
-            message: 'Field of avatar with file not found',
+            message: 'Field of avatar with file is not found',
         })
     }
     next()

@@ -31,6 +31,17 @@ const userSchema = new Schema(
             type: String,
             required: [true, 'Password required'],
         },
+
+        avatar: {
+            type: String,
+            default: function () {
+                return gravatar.url(this.email, { s: '250' }, true)
+            },
+        },
+        imgIdCloud: {
+            type: String,
+            default: null,
+        },
         token: {
             type: String,
             default: null,
