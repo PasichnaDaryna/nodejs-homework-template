@@ -12,6 +12,7 @@ router.post('/logout', guard, userController.logout)
 router.patch('/avatars', [guard, upload.single('avatar')],
     userController.avatars,
 )
+router.get('/verify/:token', userController.verify)
 
 
 module.exports = router
