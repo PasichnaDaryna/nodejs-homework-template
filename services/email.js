@@ -53,17 +53,33 @@ class EmailService {
                 },
                 outro: 'Need help, or have questions? Just reply to this email, we\'d love to help.'
             }
+
         };
+        return mailGenerator.generate(template)
     }
-    sendEmail(verifyToken, email, name) {
+
+
+
+    async sendEmail(verifyToken, email, name) {
         const emailBody = this.#createTemplate(verifyToken, name)
         this.#sender.setApiKey(process.env.SENDGRID_API_KEY)
 
+        const msg = {
+            to: email,
+            from: 'check-contacts-hw@gmail.com', // Use the email address or domain you verified above
+            subject: 'Confirm registration',
+            html: emailBody,
+        }
+
+        await this.#sender.send(msg)
     }
 
 
-
-
 }
+
+
+
+
+
 
 module.exports = EmailService
