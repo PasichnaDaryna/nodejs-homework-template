@@ -42,9 +42,9 @@ const reg = async (req, res, next) => {
         const emailService = new EmailService(process.env.NODE_ENV)
         await emailService.sendEmail(verifyToken, email, name)
         const newUser = await Users.create({
-            ...body,
+            ...req.body,
             verify: false,
-            verifyToken
+            verifyToken,
         })
         return res.status(HttpCode.CREATED).json({
             status: 'success',
@@ -53,7 +53,7 @@ const reg = async (req, res, next) => {
                 id: newUser.id,
                 email: newUser.email,
                 name: newUser.name,
-                avatar: newUser.avatar
+                avatar: newUser.avatar,
             },
         })
     } catch (e) {
@@ -65,7 +65,8 @@ const login = async (req, res, next) => {
     try {
         const { email, password } = req.body
         const user = await Users.findByEmail(email)
-        if (!user || !user.validPassword(password) || !user.verify) {
+        const isValidPassword = await user?.validPassword(password)
+        if (!user || !isValidPassword || !user.verify) {
             return res.status(HttpCode.UNAUTHORIZED).json({
                 status: 'error',
                 code: HttpCode.UNAUTHORIZED,
@@ -155,25 +156,23 @@ const saveAvatarToCloud = async (req) => {
 }
 const verify = async (req, res, next) => {
     try {
-        const user = Users.findByVerifyToken(req.params.token)
+        const user = await Users.findByVerifyToken(req.params.token)
         if (user) {
             await Users.updateVerifyToken(user.id, true, null)
             return res.json({
                 status: 'success',
                 code: HttpCode.OK,
                 message: 'Verification successful!',
-
             })
         }
-        return res.json({
-            status: 'success',
+        return res.status(HttpCode.BAD_REQUEST).json({
+            status: 'error',
             code: HttpCode.BAD_REQUEST,
             data: 'Bad request',
             message: 'Link is not valid',
         })
-
-    } catch {
-
+    } catch (e) {
+        next(e)
     }
 }
 

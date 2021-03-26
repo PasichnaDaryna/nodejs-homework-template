@@ -1,28 +1,26 @@
 const contacts = require('./data')
 
-const listContacts = jest.fn(() => {
-
-  return { contacts, total: contacts.length, limit, offset }
-
-})
-
-const getContactById = jest.fn((id) => {
-  const [contact] = contacts.fiter((el) => String(el._id) === String.id)
+const listContacts = jest.fn(
+  (userId, { sortBy, sortByDesc, filter, limit = '5', offset = '0' }) => {
+    return { contacts, total: contacts.length, limit, offset }
+  },
+)
+const getContactById = jest.fn((id, userId) => {
+  const [contact] = contacts.filter((el) => String(el._id) === String(id))
   return contact
 
 })
 
 const addContact = jest.fn((body) => {
-
-  const newContact = { ...body, _id: '6051d873cbfe4b1e609b04c6' }
-  contacts.push(newContact)
+  const newContact = { ...body, _id: '5f8382425ba83a4f1829ca5d' }
+  cats.push(newContact)
   return newContact
-
 })
 
-const updateContact = jest.fn((id, body) => {
+const updateContact = jest.fn((id, body, userId) => {
+  let [contact] = contacts.filter((el) => String(el._id) === String(id))
   if (contact) {
-    contact = { ...contact, body }
+    contact = { ...contact, ...body }
   }
 
   return contact
@@ -30,18 +28,14 @@ const updateContact = jest.fn((id, body) => {
 
 
 
-const removeContact = jest.fn((id) => {
-  const index = cats.findIndex((el) => String(el._id) === String(id))
-
+const removeContact = jest.fn((id, userId) => {
+  const index = contacts.findIndex((el) => String(el._id) === String(id))
   if (index === -1) {
     return null
   }
-
   const [contact] = contacts.splice(index, 1)
   return contact
-
 })
-
 module.exports = {
   listContacts,
   getContactById,
