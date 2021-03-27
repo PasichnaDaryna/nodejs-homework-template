@@ -56,7 +56,7 @@ class EmailService {
         this.#sender.setApiKey(process.env.SENDGRID_API_KEY)
         const msg = {
             to: email,
-            from: 'no-reply@system-cats.com', // Use the email address or domain you verified above
+            from: 'pasichnadaryna@gmail.com', // Use the email address or domain you verified above
             subject: 'Подтверждение регистрации',
             html: emailBody,
         }
