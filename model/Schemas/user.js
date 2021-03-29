@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose')
 const bcrypt = require('bcryptjs')
+const gravatar = require('gravatar')
 const { Sex } = require('../../helpers/constants')
 const SALT_WORK_FACTOR = 8
 
@@ -45,6 +46,17 @@ const userSchema = new Schema(
         token: {
             type: String,
             default: null,
+        },
+
+        verify: {
+            type: Boolean,
+            default: false
+        },
+
+
+        verifyToken: {
+            type: String,
+            required: [true, 'Token verification is required'],
         },
     },
     { versionKey: false, timestamps: true },
